@@ -1,4 +1,5 @@
 #include <stdio.h>
+/* FIXME!, removing the global config file for this fork */
 
 #include "net.h"
 
@@ -7,7 +8,7 @@ main(int argc, char *argv[])
 {
 	int sfd;
 
-	sfd = net_connect("4chan.org", "80");
+	sfd = net_connect("unixhub.net", "80");
 	if (sfd == -1) {
 		fprintf(stderr, "net_connect() failed\n");
 		return 1;
