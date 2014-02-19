@@ -13,7 +13,7 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	shutdown(sfd, 2);
+	shutdown(sfd, SHUT_RDWR);
 	close(sfd);
 	return 0;
 }
