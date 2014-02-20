@@ -1,20 +1,17 @@
 #include <stdio.h>
-/* FIXME!, removing the global config file for this fork */
 
-#include "net.h"
+#include "irc.h"
 
 int
 main(int argc, char *argv[])
 {
-	int sfd;
-
-	sfd = net_connect("unixhub.net", "80");
-	if (sfd == -1) {
-		fprintf(stderr, "net_connect() failed\n");
+	struct irc_session *irc;
+	
+	irc = irc_open("irc.unixhub.net", "6697", "blunt", "blunt", "blunt");
+	if (irc == NULL) {
+		fprintf(stderr, "irc_open() failed\n");
 		return 1;
 	}
 
-	shutdown(sfd, SHUT_RDWR);
-	close(sfd);
 	return 0;
 }
