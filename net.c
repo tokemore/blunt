@@ -1,4 +1,9 @@
 #include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <netdb.h>
 
 int
 net_connect(const char *host, const char *port)
@@ -13,7 +18,7 @@ net_connect(const char *host, const char *port)
 
 	err = getaddrinfo(host, port, &hints, &res);
 	if (err != 0) {
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(err);
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(err));
 		return -1;
 	}
 
