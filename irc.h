@@ -1,17 +1,26 @@
 #ifndef IRC_H
 #define IRC_H
 
+struct irc_callbacks {
+	void *p;
+};
+
 struct irc_session {
 	int sfd;
 };
 
-struct irc_session *
-irc_open(const char *host, const char *port, const char *nick, const char *username, const char *realname);
+/*
+	irc_create_session()
+	create an irc_session and initialize the callbacks
+*/
 
-int 
-irc_join(struct irc_session *irc, const char *channel, const char *key);
+struct irc_session *irc_create_session(struct irc_callbacks *callbacks);
 
-int
-irc_part(struct irc_session *irc, const char *channel);
+/* 
+	irc_connect()
+	connect to a given server and login
+*/
+
+int irc_connect(struct irc_session *session, const char *host, const char *port, const char *nick, const char *username, const char *realname);
 
 #endif

@@ -3,51 +3,40 @@
 #include "irc.h"
 #include "net.h"
 
-struct irc_session *
-irc_open(const char *host, const char *port, const char *nick, const char *username, const char *realname)
+struct irc_session *irc_create_session((struct irc_callbacks *callbacks)
 {
-	struct irc_session *irc;
+	struct irc_session *session;
+	
+	if (callbacks == NULL)
+		return NULL;
+	
+	session = malloc(sizeof(struct irc_session));
+	if (session == NULL)
+		return NULL;
+
+	session->callbacks = callbacks;
+	return session;
+}
+
+int irc_connect(struct irc_session *session, const char *host, const char *port, const char *nick, const char *username, const char *realname)
+{
 	int sfd;
 
-	irc = malloc(sizeof(struct irc_session));
-	if (irc == NULL)
-		return NULL;
+	sfd = net_connect(host, port);
+	if (sfd == -1)
+		return 1;
 
-	sfd = tcp_open(host, port);
-	if (sfd == -1) {
-		free(irc);
-		return NULL;
-	}
+	session->sfd = sfd;
 
-	irc->sfd = sfd;
-
-	if (irc_nick(irc, nick) != 0) {
+	if (irc_nick(session, nick) != 0) 
 		close(sfd);
-		free(irc);
-		return NULL;
+		return 1;
 	}
 
-	if (irc_send(irc, "USER %s 0 * :%s\r\n", username, realname) != 0) {
+	if (irc_send(session, "USER %s 0 * :%s\r\n", username, realname) != 0) {
 		close(sfd);
-		free(irc);
-		return NULL;
+		return 1;
 	}
 
-	return irc;
-}
-
-int 
-irc_join(struct irc_session *irc, const char *channel, const char *key)
-{
-	if (key == NULL)
-		return irc_send(irc, "JOIN %s\r\n", channel);
-
-	
-	return irc_send(irc, "JOIN %s %s\r\n", channel, key);
-}
-
-int
-irc_part(struct irc_session *irc, const char *channel)
-{
-	return irc_send(irc, "PART %s\r\n", channel);
+	return 0;
 }
